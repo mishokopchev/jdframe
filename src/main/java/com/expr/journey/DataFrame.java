@@ -48,7 +48,7 @@ public class DataFrame<V> implements Iterable<List<V>> {
 		return this.columns.names();
 	}
 
-	public DataFrame add(Object column, List<V> values) {
+	public DataFrame<V> add(Object column, List<V> values) {
 		this.columns.add(column);
 		this.data.add(values);
 		return this;
@@ -57,8 +57,8 @@ public class DataFrame<V> implements Iterable<List<V>> {
 	@Override
 	public String toString() {
 		String cols = this.columns.toString();
-		String data = this.data.toString();
-		return new StringBuilder(cols).append("\n").append(data).toString();
+		String blocks = this.data.toString();
+		return new StringBuilder(cols).append("\n").append(blocks).toString();
 	}
 
 }

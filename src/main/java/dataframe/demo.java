@@ -19,10 +19,10 @@ public class demo {
 			}
 			data.add((List<Integer>) lists);
 		}
-		List<String> cols = Arrays.asList("Name", "Age", "Salary", "Vag", "EGN");
+		List<String> co	ls = Arrays.asList("Name", "Age", "Salary", "Vag", "EGN");
 		DataFrame dataframe = new DataFrame(data, cols);
 		dataframe.add("Vafla", null);
-		dataframe.add("dobre li e", data.get(0));
+		dataframe.add("dobre li e", (List<?>) data.get(0));
 		System.out.println(dataframe);
 
 	}

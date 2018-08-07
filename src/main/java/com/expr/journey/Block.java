@@ -18,7 +18,7 @@ public class Block<V> {
 		if (data.isEmpty()) {
 			this.blocks = new LinkedList<>();
 			for (Collection<? extends V> col : data) {
-				add_internal(new ArrayList<V>(col));
+				add(new ArrayList<V>(col));
 			}
 		} else {
 			this.blocks = (List<List<V>>) data;
@@ -39,29 +39,26 @@ public class Block<V> {
 	}
 
 	public void add(List<V> values) {
-		if (values != null && !values.isEmpty()) {
-			blocks.add(values);
-		} else {
-			add_internal(values);
+		if (values == null) {
+			values = new ArrayList();
+			fill(values, 0, (int) this.size());
+		} else if (values.size() < this.size()) {
+			fill(values, values.size(), (int) this.size());
 		}
+		this.blocks.add(values);
 	}
 
-	private void add_internal(List<V> column) {
-		if (column == null) {
-			column = new ArrayList<>();
-		}
-		final long size = size();
-		for (int i = 0; i < size; i++) {
+	private void fill(List<V> column, int start, int end) {
+		for (int i = start; i < end; i++) {
 			column.add(null);
 		}
-		blocks.add(column);
 	}
 
 	@Override
 	public String toString() {
 		if (size() != 0) {
-			StringBuilder builder = new StringBuilder();
-			for(int row = 0; row < size();row++) {
+			StringBuilder builder = new StringBuilder("");
+			for (int row = 0; row < size(); row++) {
 				for (int index = 0; index < blocks.size(); index++) {
 					builder.append(blocks.get(index).get(row));
 					builder.append("\t");
