@@ -3,3 +3,6 @@ bin
 .settings
 gradle
 .project
+build
+.gradle/3.3/
+.idea
