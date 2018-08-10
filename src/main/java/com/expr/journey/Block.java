@@ -23,8 +23,9 @@ public class Block<V> {
 
     }
 
-    public void put(int row, int col, V value) {
+    public boolean put(int row, int col, V value) {
         blocks.get(col).set(row, value);
+        return true;
     }
 
     public V get(int row, int col) {
@@ -55,21 +56,7 @@ public class Block<V> {
 
 
     public void add(List<V> values) {
-        if (values == null) {
-            values = innerType;
-            fill(values, 0, (int) this.size());
-        } else if (values.size() > this.size()) {
-            //todo Not Implemmented when you want more column with more values
-        } else if (values.size() < this.size()) {
-            fill(values, values.size(), (int) this.size());
-        }
         this.blocks.add(values);
-    }
-
-    private void fill(List<V> column, int start, int end) {
-        for (int i = start; i < end; i++) {
-            column.add(null);
-        }
     }
 
     @Override

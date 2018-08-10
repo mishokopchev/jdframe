@@ -1,22 +1,16 @@
 package com.expr.journey;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.*;
 
 public class DataFrame<V> implements Iterable<List<V>> {
-    private Block<V> data;
-    private Index columns;
-    private Index rows;
-    private static String defaultColumnValue = "Column ";
-    private static String defaultRowValue = "Row ";
+    private IBlockService<V> block;
+    private IIndexStorage<String> columns;
+    private IIndexStorage<Object> rows;
 
     public DataFrame(Collection<Object> columns, Collection<Object> indexes) {
         this(Collections.<List<V>>emptyList(), columns, indexes);
-    }
-
-    public DataFrame(Block<V> data, Index columns, Index rows) {
-        this.data = data;
-        this.columns = columns;
-        this.rows = rows;
     }
 
     public DataFrame(List<List<V>> data, Collection<Object> columns) {
@@ -24,9 +18,9 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public DataFrame(List<List<V>> data, Collection<Object> columns, Collection<Object> indexes) {
-        this.data = new Block<>(data);
-        this.columns = new Index(columns);
-        this.rows = new Index(indexes);
+        this.block = new BlockService<>(data);
+        this.columns = new IndexStorage<>(columns);
+        this.rows = new IndexStorage<>(indexes);
     }
 
     public DataFrame(String... columns) {
@@ -37,10 +31,6 @@ public class DataFrame<V> implements Iterable<List<V>> {
         this(Collections.<List<V>>emptyList(), columns, Collections.emptyList());
     }
 
-    @Override
-    public Iterator<List<V>> iterator() {
-        return null;
-    }
 
     public Collection<?> columns() {
         return this.columns.names();
@@ -48,42 +38,47 @@ public class DataFrame<V> implements Iterable<List<V>> {
 
     public DataFrame append(List<V> values) {
 
-        return append(defaultRowValue + 1, values);
+        return append(null, values);
     }
 
     public DataFrame append(Object name, List<V> values) {
         int len = (int) size();
         int row = len + 1;
-        this.data.reshape(columns.names().size(), row);
-        this.rows.add(name);
+        this.block.reshape(columns.names().size(), row);
+
+        this.rows.put(name);
         int c = 0;
-        for (; c < values.size(); c++) {
-            data.put(row, c, c < values.size() ? values.get(c) : null);
-        }
+
+        this.block.row(values);
         return this;
     }
 
 
-    public DataFrame<V> addColumn(Object column, List<V> values) {
-        this.data.add(values);
-        this.columns.add(column);
+    public DataFrame<V> column(String column, List<V> values) {
+        this.block.column(values);
+        this.columns.put(column);
         return this;
     }
 
-    public DataFrame<V> addColumn(Object column) {
-        this.addColumn(column, null);
+    public DataFrame<V> column(String column) {
+        this.column(column, null);
         return this;
     }
 
     public long size() {
-        return data.size();
+        return block.size();
     }
 
     @Override
     public String toString() {
         String cols = this.columns.toString();
-        String blocks = this.data.toString();
+        String blocks = this.block.toString();
         return new StringBuilder(cols).append("\n").append(blocks).toString();
+    }
+
+    @Override
+    public Iterator<List<V>> iterator() {
+        throw new NotImplementedException();
     }
 
 }

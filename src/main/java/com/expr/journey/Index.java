@@ -1,75 +1,73 @@
 package com.expr.journey;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import javax.management.RuntimeErrorException;
+public class Index<K extends Object> {
+    private Map<K, Object> index;
+    private K defaultKey;
 
-public class Index {
-	private Map<Object, Object> index;
+    public Index() {
+        this(Collections.emptyList());
+    }
 
-	public Index() {
-		this(Collections.emptyList());
-	}
+    public Index(Collection<? extends Object> names) {
+        this(names, names.size());
+    }
 
-	public Index(Collection<? extends Object> names) {
-		this(names, names.size());
-	}
+    public Index(Collection<? extends Object> names, int size) {
+        this.index = new LinkedHashMap<>(size);
+        final Iterator<? extends Object> iterator = names.iterator();
+        for (int i = 0; i < size; i++) {
+            K name = iterator.hasNext() ? (K) iterator.next() : defaultKey;
+            put(name, i);
+        }
 
-	public Index(Collection<? extends Object> names, int size) {
-		this.index = new LinkedHashMap<>(size);
-		final Iterator<? extends Object> iterator = names.iterator();
-		for (int i = 0; i < size; i++) {
-			Object name = iterator.hasNext() ? iterator.next() : i;
-			add(name, i);
-		}
+    }
 
-	}
+    public void extend(int size) {
+        int currentSize = (int) size();
+        int extendedWith = size + currentSize;
+        for (int i = currentSize; i < extendedWith; i++) {
+            put(defaultKey, i);
+        }
+    }
 
-	public void extend(int size) {
-		int currentSize = (int) size();
-		int extendedWith = size + currentSize;
+    public void put(K key, Object value) {
+        if (this.index.put(key, value) != null) {
+            throw new RuntimeException(String.format("There is duplicate enrty in the frame for key %s", key));
+        }
+    }
 
-		for (int i = currentSize; i < extendedWith; i++) {
-			add(i, i);
-		}
-	}
+    public boolean contains(Object key) {
+        return index.containsKey(key);
+    }
 
-	public void add(Object key, Object value) {
-		if (this.index.put(key, value) != null) {
-			throw new RuntimeException(String.format("There is duplicate enrty in the frame for key %s", key));
-		}
-	}
+    public void put(K key) {
+        put(key, index.size());
+    }
 
-	public void add(Object key) {
-		add(key, index.size());
-	}
+    public Object get(Object key) {
+        Object value = this.index.get(key);
+        if (value == null) {
+            throw new RuntimeException(String.format("Cannot find value for key %s", key));
+        }
+        return this.index.get(key);
+    }
 
-	public Object get(Object key) {
-		Object value = this.index.get(key);
-		if (value == null) {
-			throw new RuntimeException(String.format("Cannot find value for key %s", key));
-		}
-		return this.index.get(key);
-	}
+    public long size() {
+        return this.index.size();
+    }
 
-	public long size() {
-		return this.index.size();
-	}
+    public Collection<? extends K> names() {
+        return this.index.keySet();
+    }
 
-	public Collection<? extends Object> names() {
-		return this.index.keySet();
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		for (Object key : this.index.keySet()) {
-			builder.append(key).append("\t");
-		}
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Object key : this.index.keySet()) {
+            builder.append(key).append("\t");
+        }
+        return builder.toString();
+    }
 }

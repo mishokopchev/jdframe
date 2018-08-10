@@ -9,10 +9,6 @@ public interface IBlockService<V> {
 
     void reshape(int cols, int rows);
 
-    boolean column(Object... column);
-
-    boolean column(Object column, List<V> values);
-
     boolean column(List<V> values);
 
     List<V> column(int index);
