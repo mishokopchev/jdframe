@@ -19,8 +19,8 @@ public class DataFrame<V> implements Iterable<List<V>> {
 
     public DataFrame(List<List<V>> data, Collection<Object> columns, Collection<Object> indexes) {
         this.block = new BlockService<>(data);
-        this.columns = new IndexStorage<>(columns);
-        this.rows = new IndexStorage<>(indexes);
+        this.columns = new Column(columns);
+        this.rows = new Row(indexes);
     }
 
     public DataFrame(String... columns) {

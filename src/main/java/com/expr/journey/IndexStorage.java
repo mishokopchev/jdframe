@@ -7,8 +7,10 @@ import java.util.Objects;
 /**
  * Created by mihailkopchev on 8/10/18.
  */
-public class IndexStorage<K> implements IIndexStorage<K> {
+public abstract class IndexStorage<K> implements IIndexStorage<K> {
     private Index<K> storage;
+
+    public abstract K defaultKey();
 
     public IndexStorage() {
         this(Collections.emptyList());
@@ -21,7 +23,7 @@ public class IndexStorage<K> implements IIndexStorage<K> {
     @Override
     public void extend(int size) {
         if (size > 0) {
-            storage.extend(size);
+            storage.extend(size, defaultKey());
         }
 
     }

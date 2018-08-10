@@ -24,7 +24,7 @@ public class Index<K extends Object> {
 
     }
 
-    public void extend(int size) {
+    public void extend(int size, K defaultKey) {
         int currentSize = (int) size();
         int extendedWith = size + currentSize;
         for (int i = currentSize; i < extendedWith; i++) {
