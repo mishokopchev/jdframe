@@ -45,7 +45,7 @@ public class BlockService<V> implements IBlockService<V> {
 
     @Override
     public List<V> column(int index) {
-        return null;
+        return this.block.get(index);
     }
 
     @Override

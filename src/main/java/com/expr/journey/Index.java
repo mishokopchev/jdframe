@@ -2,37 +2,42 @@ package com.expr.journey;
 
 import java.util.*;
 
-public class Index<K extends Object> {
-    private Map<K, Object> index;
-    private K defaultKey;
+public class Index<K> {
+    private Map<K, Integer> index;
+
 
     public Index() {
         this(Collections.emptyList());
     }
 
-    public Index(Collection<? extends Object> names) {
+    public Index(Collection<K> names) {
         this(names, names.size());
     }
 
-    public Index(Collection<? extends Object> names, int size) {
+    private Index(Collection<? extends Object> names, int size) {
+        assert names.size() == size;
         this.index = new LinkedHashMap<>(size);
         final Iterator<? extends Object> iterator = names.iterator();
         for (int i = 0; i < size; i++) {
-            K name = iterator.hasNext() ? (K) iterator.next() : defaultKey;
+            K name = (K) iterator.next();
             put(name, i);
         }
 
     }
 
-    public void extend(int size, K defaultKey) {
+    public void append(K key, int size) {
+        put(key, size);
+    }
+
+    public void extend(int size) {
         int currentSize = (int) size();
         int extendedWith = size + currentSize;
-        for (int i = currentSize; i < extendedWith; i++) {
-            put(defaultKey, i);
+        for (Integer i = currentSize; i < extendedWith; i++) {
+            put((K) i, i);
         }
     }
 
-    public void put(K key, Object value) {
+    public void put(K key, Integer value) {
         if (this.index.put(key, value) != null) {
             throw new RuntimeException(String.format("There is duplicate enrty in the frame for key %s", key));
         }
@@ -42,7 +47,7 @@ public class Index<K extends Object> {
         return index.containsKey(key);
     }
 
-    public void put(K key) {
+    private void put(K key) {
         put(key, index.size());
     }
 

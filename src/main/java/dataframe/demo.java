@@ -20,8 +20,8 @@ public class demo {
         }
         List<String> cols = Arrays.asList("Name", "Age", "Salary", "Vag", "EGN");
         DataFrame dataframe = new DataFrame(data, cols);
-        dataframe.column("Vafla", null);
-        dataframe.column("dobre li e", (List<?>) data.get(0));
+        dataframe.addColumn("Vafla", null);
+        dataframe.addColumn("dobre li e", (List<?>) data.get(0));
         System.out.println(dataframe);
 
     }

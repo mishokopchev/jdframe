@@ -9,7 +9,7 @@ public class Column extends IndexStorage<String> {
     private static String defaultKey = "Column: ";
     private static Integer counter = 0;
 
-    public Column(Collection collection){
+    public Column(Collection collection) {
         super(collection);
     }
 
@@ -17,5 +17,13 @@ public class Column extends IndexStorage<String> {
     public String defaultKey() {
         counter++;
         return defaultKey + counter;
+    }
+
+    @Override
+    public void append(String key, int size) {
+        if (key == null) {
+            key = defaultKey();
+        }
+        super.append(key, size);
     }
 }

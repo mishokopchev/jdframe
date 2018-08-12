@@ -8,19 +8,41 @@ public class DataFrame<V> implements Iterable<List<V>> {
     private IBlockService<V> block;
     private IIndexStorage<String> columns;
     private IIndexStorage<Object> rows;
+    private Class<ArrayList> defaultType = ArrayList.class;
 
-    public DataFrame(Collection<Object> columns, Collection<Object> indexes) {
-        this(Collections.<List<V>>emptyList(), columns, indexes);
-    }
-
+    //TODO losh constructor baq ne checkva za problemi s dannite pri sazdavane
     public DataFrame(List<List<V>> data, Collection<Object> columns) {
-        this(data, columns, Collections.emptyList());
-    }
-
-    public DataFrame(List<List<V>> data, Collection<Object> columns, Collection<Object> indexes) {
+        Collection<Object> indices = generateIndex(data);
+        accurateParameters(data, columns, indices);
         this.block = new BlockService<>(data);
         this.columns = new Column(columns);
-        this.rows = new Row(indexes);
+        this.rows = new Row(indices);
+    }
+
+    private Collection generateIndex(List<List<V>> data) {
+        List<Object> indices = new ArrayList<>();
+        if (!data.isEmpty()) {
+            int len = data.get(0).size();
+            for (int index = 0; index < len; index++) {
+                indices.add(index);
+            }
+        }
+        return indices;
+    }
+
+    private boolean accurateParameters(List<List<V>> data, Collection<Object> columns, Collection<Object> indices) {
+        Objects.requireNonNull(data);
+        Objects.requireNonNull(columns);
+        Objects.requireNonNull(indices);
+        if (!data.isEmpty()) {
+            if (data.size() != columns.size()) {
+                throw new RuntimeException(
+                        String.format("Shape of passed data is (%s), indices imply (%s)",
+                                data.size(), columns.size()));
+            }
+        }
+
+        return true;
     }
 
     public DataFrame(String... columns) {
@@ -28,12 +50,12 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public DataFrame(List<Object> columns) {
-        this(Collections.<List<V>>emptyList(), columns, Collections.emptyList());
+        this(new ArrayList(), columns);
     }
 
 
     public Collection<?> columns() {
-        return this.columns.names();
+        return this.columns.keys();
     }
 
     public DataFrame append(List<V> values) {
@@ -44,26 +66,29 @@ public class DataFrame<V> implements Iterable<List<V>> {
     public DataFrame append(Object name, List<V> values) {
         int len = (int) size();
         int row = len + 1;
-        this.block.reshape(columns.names().size(), row);
-
-        this.rows.put(name);
-        int c = 0;
-
-        this.block.row(values);
+        block.reshape(columns.keys().size(), row);
+        block.row(values);
+        rows.append(name, row);
         return this;
     }
 
 
-    public DataFrame<V> column(String column, List<V> values) {
-        this.block.column(values);
-        this.columns.put(column);
+    public DataFrame<V> addColumn(String column, List<V> values) {
+        int len = this.columns.keys().size();
+        columns.append(column, len + 1);
+        block.column(values);
         return this;
     }
 
-    public DataFrame<V> column(String column) {
-        this.column(column, null);
-        return this;
+    public DataFrame<V> addColumn(String column) {
+        return this.addColumn(column, null);
     }
+
+    public List<V> getColumn(String column) {
+        Integer index = (Integer) this.columns.get(column);
+        return this.block.column(index);
+    }
+
 
     public long size() {
         return block.size();

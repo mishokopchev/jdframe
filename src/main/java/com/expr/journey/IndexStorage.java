@@ -20,35 +20,28 @@ public abstract class IndexStorage<K> implements IIndexStorage<K> {
         this.storage = new Index<>(collection);
     }
 
-    @Override
-    public void extend(int size) {
-        if (size > 0) {
-            storage.extend(size, defaultKey());
-        }
-
+    public void append(K key, int size) {
+        requireNonNullOrThrowException(key);
+        assert size > 0;
+        storage.append(key, size);
     }
 
     @Override
-    public void put(K key) {
-        Objects.requireNonNull(key);
-        storage.put(key);
+    public void extend(int size) {
+        if (size > 0) {
+            storage.extend(size);
+        }
     }
 
     @Override
     public boolean contains(K key) {
-        Objects.requireNonNull(key);
+        requireNonNullOrThrowException(key);
         return storage.contains(key);
     }
 
     @Override
-    public void put(K key, Object value) {
-        Objects.requireNonNull(key);
-        storage.put(key);
-    }
-
-    @Override
     public Object get(K key) {
-        Objects.requireNonNull(key);
+        requireNonNullOrThrowException(key);
         return storage.get(key);
     }
 
@@ -58,8 +51,12 @@ public abstract class IndexStorage<K> implements IIndexStorage<K> {
     }
 
     @Override
-    public Collection<K> names() {
+    public Collection<K> keys() {
         return (Collection<K>) storage.names();
+    }
+
+    private void requireNonNullOrThrowException(Object obj) {
+        Objects.requireNonNull(obj);
     }
 
 

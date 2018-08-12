@@ -32,6 +32,10 @@ public class Block<V> {
         return blocks.get(col).get(row);
     }
 
+    public List<V> get(int index) {
+        return this.blocks.get(index);
+    }
+
     public long size() {
         return size(0);
     }

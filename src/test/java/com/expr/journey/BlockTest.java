@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BlockTest {
@@ -61,7 +60,7 @@ public class BlockTest {
 
         block.add(newColumn);
         data.add(newColumn);
-        Assert.assertEquals(block.size(5),block.size());
+        Assert.assertEquals(block.size(5), block.size());
 
     }
 
