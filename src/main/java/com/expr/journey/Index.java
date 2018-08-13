@@ -47,10 +47,6 @@ public class Index<K> {
         return index.containsKey(key);
     }
 
-    private void put(K key) {
-        put(key, index.size());
-    }
-
     public Object get(Object key) {
         Object value = this.index.get(key);
         if (value == null) {

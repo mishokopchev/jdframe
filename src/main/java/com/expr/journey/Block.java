@@ -36,14 +36,17 @@ public class Block<V> {
         return this.blocks.get(index);
     }
 
-    public long size() {
-        return size(0);
+    public int length() {
+        return length(0);
     }
 
-    public long size(int index) {
+    public int length(int index) {
         return blocks.isEmpty() ? 0 : blocks.get(0).size();
     }
 
+    public int width() {
+        return blocks.isEmpty() ? 0 : blocks.size();
+    }
 
     public void reshape(int withCols, int withRows) {
         for (int index = blocks.size(); index < withCols; index++) {
@@ -65,9 +68,9 @@ public class Block<V> {
 
     @Override
     public String toString() {
-        if (size() != 0) {
+        if (length() != 0) {
             StringBuilder builder = new StringBuilder("");
-            for (int row = 0; row < size(); row++) {
+            for (int row = 0; row < length(); row++) {
                 for (int index = 0; index < blocks.size(); index++) {
                     builder.append(blocks.get(index).get(row));
                     builder.append("\t");

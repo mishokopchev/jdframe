@@ -40,7 +40,7 @@ public class BlockTest {
 
     @Test
     public void testSize() {
-        Assert.assertEquals(this.block.size(), data.size());
+        Assert.assertEquals(this.block.length(), data.size());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BlockTest {
         List newColumn = null;
         block.add(newColumn);
         data.add(newColumn);
-        Assert.assertEquals(block.size(), data.get(0).size());
+        Assert.assertEquals(block.length(), data.get(0).size());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class BlockTest {
 
         block.add(newColumn);
         data.add(newColumn);
-        Assert.assertEquals(block.size(5), block.size());
+        Assert.assertEquals(block.length(5), block.length());
 
     }
 

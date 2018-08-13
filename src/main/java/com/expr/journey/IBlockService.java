@@ -21,7 +21,11 @@ public interface IBlockService<V> {
 
     V get(int row, int col);
 
-    long size();
+    int length();
 
-    long size(int index);
+    int length(int index);
+
+    int width();
+
+
 }

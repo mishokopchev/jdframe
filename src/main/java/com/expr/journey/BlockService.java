@@ -33,11 +33,11 @@ public class BlockService<V> implements IBlockService<V> {
             values = new ArrayList<>();
         }
         if (values.isEmpty()) {
-            fill(values, 0, (int) this.size());
-        } else if (values.size() > this.size()) {
+            fill(values, 0, (int) this.length());
+        } else if (values.size() > this.length()) {
             //reshapeAll todo
-        } else if (values.size() < this.size()) {
-            fill(values, values.size(), (int) this.size());
+        } else if (values.size() < this.length()) {
+            fill(values, values.size(), (int) this.length());
         }
         this.block.add(values);
         return true;
@@ -65,7 +65,7 @@ public class BlockService<V> implements IBlockService<V> {
 
     @Override
     public boolean put(int row, int col, V value) {
-        if (col > this.size() || row > this.size()) {
+        if (col > this.length() || row > this.length()) {
             //exceptionche  todo
         }
         return this.block.put(row, col, value);
@@ -73,21 +73,27 @@ public class BlockService<V> implements IBlockService<V> {
 
     @Override
     public V get(int row, int col) {
-        if (col > this.size() || row > this.size()) {
+        if (col > this.length() || row > this.length()) {
             //exceptionche todo
         }
         return block.get(row, col);
     }
 
     @Override
-    public long size() {
-        return block.size();
+    public int length() {
+        return block.length();
     }
 
     @Override
-    public long size(int index) {
-        //todo exception4e trqbva
-        return index > block.size() ? 0 : block.size(index);
+    public int length(int index) {
+        if (index < 0 || index > Integer.MAX_VALUE) {
+            throw new RuntimeException("kur");//todo fix
+        }
+        return index > block.length() ? 0 : block.length(index);
+    }
+
+    public int width() {
+        return block.width();
     }
 
     private void fill(List<V> column, int start, int end) {

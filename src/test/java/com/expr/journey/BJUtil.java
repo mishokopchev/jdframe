@@ -50,5 +50,13 @@ public class BJUtil {
         this.data = data;
         return this;
     }
+
+    public List emptyListWithNulls(int size) {
+        List list = new ArrayList();
+        for (int i = 0; i < size; i++) {
+            list.add(null);
+        }
+        return list;
+    }
 }
 

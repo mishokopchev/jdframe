@@ -8,15 +8,23 @@ public class DataFrame<V> implements Iterable<List<V>> {
     private IBlockService<V> block;
     private IIndexStorage<String> columns;
     private IIndexStorage<Object> rows;
-    private Class<ArrayList> defaultType = ArrayList.class;
 
-    //TODO losh constructor baq ne checkva za problemi s dannite pri sazdavane
+
     public DataFrame(List<List<V>> data, Collection<Object> columns) {
-        Collection<Object> indices = generateIndex(data);
+        Collection indices = generateIndex(data);
         accurateParameters(data, columns, indices);
         this.block = new BlockService<>(data);
         this.columns = new Column(columns);
         this.rows = new Row(indices);
+
+    }
+
+    public DataFrame(String... columns) {
+        this(Arrays.asList((Object[]) columns));
+    }
+
+    public DataFrame(List<Object> columns) {
+        this(new ArrayList(), columns);
     }
 
     private Collection generateIndex(List<List<V>> data) {
@@ -45,14 +53,6 @@ public class DataFrame<V> implements Iterable<List<V>> {
         return true;
     }
 
-    public DataFrame(String... columns) {
-        this(Arrays.asList((Object[]) columns));
-    }
-
-    public DataFrame(List<Object> columns) {
-        this(new ArrayList(), columns);
-    }
-
 
     public Collection<?> columns() {
         return this.columns.keys();
@@ -64,7 +64,7 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public DataFrame append(Object name, List<V> values) {
-        int len = (int) size();
+        int len = (int) length();
         int row = len + 1;
         block.reshape(columns.keys().size(), row);
         block.row(values);
@@ -89,9 +89,21 @@ public class DataFrame<V> implements Iterable<List<V>> {
         return this.block.column(index);
     }
 
+    public List<V> getRow(Object row) {
+        Integer index = (Integer) this.rows.get(row);
+        return this.block.row(index);
+    }
 
-    public long size() {
-        return block.size();
+    public V get(int row, int col) {
+        return this.block.get(row, col);
+    }
+
+    public int length() {
+        return block.length();
+    }
+
+    public int width() {
+        return block.width();
     }
 
     @Override
@@ -106,4 +118,6 @@ public class DataFrame<V> implements Iterable<List<V>> {
         throw new NotImplementedException();
     }
 
+
 }
+
