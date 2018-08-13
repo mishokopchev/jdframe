@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Created by mihailkopchev on 8/10/18.
  */
-public class Column extends IndexStorage<String> {
+public class Column extends IndexStorage<String, Integer> {
     private static String defaultKey = "Column: ";
     private static Integer counter = 0;
 
@@ -20,10 +20,10 @@ public class Column extends IndexStorage<String> {
     }
 
     @Override
-    public void append(String key, int size) {
+    public void put(String key, Integer size) {
         if (key == null) {
             key = defaultKey();
         }
-        super.append(key, size);
+        super.put(key, size);
     }
 }

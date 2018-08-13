@@ -28,4 +28,27 @@ public class Views {
 
         }
     }
+
+    public static class SeriesBlockView<V> extends AbstractList<V> {
+        private Block<V> block;
+        private boolean transpose;
+        private int index;
+
+        public SeriesBlockView(Block<V> block, boolean transpose, int index) {
+            this.transpose = transpose;
+            this.index = index;
+            this.block = block;
+        }
+
+        @Override
+        public V get(int ind) {
+            return transpose ? block.get(ind,this.index) : block.get(this.index, ind);
+        }
+
+        @Override
+        public int size() {
+            return transpose ? block.width() : block.length();
+
+        }
+    }
 }

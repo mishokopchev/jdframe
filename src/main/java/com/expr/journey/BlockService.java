@@ -15,7 +15,7 @@ public class BlockService<V> implements IBlockService<V> {
     }
 
     public BlockService(final Collection<? extends Collection<? extends V>> data) {
-        block = new Block<V>(data);
+        this(new Block<V>(data));
     }
 
     public BlockService(Block block) {
@@ -23,82 +23,112 @@ public class BlockService<V> implements IBlockService<V> {
     }
 
     @Override
-    public void reshape(int cols, int rows) {
-        this.reshape(cols, rows);
+    public void reshape(int rows, int cols) {
+        if (cols < 0 || rows < 0) {
+            throw new IllegalArgumentException(String.format("(%s,%s) values exceed minimum indices", rows, cols));
+        }
+        for (int i = 0; i < cols; i++) {
+            column(null);
+        }
+        for (int i = 0; i < rows; i++) {
+            row(null);
+        }
+
     }
 
     @Override
-    public boolean column(List<V> values) {
+    public void column(List<V> values) {
         if (values == null) {
             values = new ArrayList<>();
         }
-        if (values.isEmpty()) {
-            fill(values, 0, (int) this.length());
-        } else if (values.size() > this.length()) {
-            //reshapeAll todo
-        } else if (values.size() < this.length()) {
-            fill(values, values.size(), (int) this.length());
+
+        int colLength = values.size();
+        int blockLength = length();
+
+        if (colLength == 0) {
+            modifySize(values, 0, blockLength, false);
+        } else if (colLength > blockLength) {
+            modifySize(values, blockLength, colLength, true);
+        } else if (colLength < blockLength) {
+            modifySize(values, colLength, blockLength, false);
         }
-        this.block.add(values);
-        return true;
+        block.column(values);
+
     }
 
     @Override
-    public List<V> column(int index) {
-        return this.block.get(index);
-    }
-
-    @Override
-    public List<V> row(int index) {
-        return null;
-    }
-
-    @Override
-    public boolean row(List<V> values) {
-        int row = 0;
-        int c = 0;
-        for (; c < values.size(); c++) {
-            block.put(row, c, c < values.size() ? values.get(c) : null);
+    public void row(List<V> values) {
+        if (values == null) {
+            values = new ArrayList<>();
         }
-        return true;
+        int len = length();
+        int rowLen = values.size();
+        int blockWidth = width();
+
+        if (rowLen < blockWidth) {
+            modifySize(values, rowLen, blockWidth, false);
+        } else if (rowLen > len) {
+            modifySize(values, len, rowLen, true);
+        }
+        // row_internal(len + 1, values);
+        block.row(values);
+    }
+
+    private void row_internal(int row, List<V> values) {
+        for (int c = 0; c < values.size(); c++) {
+            block.put(row, c, values.get(c));
+        }
     }
 
     @Override
-    public boolean put(int row, int col, V value) {
-        if (col > this.length() || row > this.length()) {
-            //exceptionche  todo
-        }
-        return this.block.put(row, col, value);
+    public List<V> column(DataFrame df, int index) {
+        return new Views.SeriesBlockView(block, true, index);
+    }
+
+    @Override
+    public List<V> row(DataFrame df, int index) {
+        return new Views.SeriesBlockView<>(block, false, index);
+    }
+
+    @Override
+    public void put(int row, int col, V value) {
+        accurateIndices(row, col);
+        block.put(row, col, value);
     }
 
     @Override
     public V get(int row, int col) {
-        if (col > this.length() || row > this.length()) {
-            //exceptionche todo
-        }
+        accurateIndices(row, col);
         return block.get(row, col);
     }
+
 
     @Override
     public int length() {
         return block.length();
     }
 
-    @Override
-    public int length(int index) {
-        if (index < 0 || index > Integer.MAX_VALUE) {
-            throw new RuntimeException("kur");//todo fix
-        }
-        return index > block.length() ? 0 : block.length(index);
-    }
-
     public int width() {
         return block.width();
     }
 
-    private void fill(List<V> column, int start, int end) {
-        for (int i = start; i < end; i++) {
-            column.add(null);
+    private boolean accurateIndices(int row, int col) {
+        if ((col > this.width() || col < 0) || (row > this.length() || row < 0)) {
+            throw new IllegalArgumentException(
+                    String.format("(%s,%s) values exceed possible values of(%s,%s)", row, col, width(), length()));
+        }
+        return true;
+    }
+
+    private void modifySize(List struct, int from, int to, boolean shrink) {
+        if (shrink) {
+            for (int i = from; i < to; i++) {
+                struct.remove(i);
+            }
+        } else {
+            for (int i = from; i < to; i++) {
+                struct.add(null);
+            }
         }
     }
 }

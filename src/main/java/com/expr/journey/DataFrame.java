@@ -6,8 +6,8 @@ import java.util.*;
 
 public class DataFrame<V> implements Iterable<List<V>> {
     private IBlockService<V> block;
-    private IIndexStorage<String> columns;
-    private IIndexStorage<Object> rows;
+    private IIndexStorage columns;
+    private IIndexStorage rows;
 
 
     public DataFrame(List<List<V>> data, Collection<Object> columns) {
@@ -58,24 +58,24 @@ public class DataFrame<V> implements Iterable<List<V>> {
         return this.columns.keys();
     }
 
-    public DataFrame append(List<V> values) {
+    public DataFrame appendRow(List<V> values) {
 
-        return append(null, values);
+        return appendRow(null, values);
     }
 
-    public DataFrame append(Object name, List<V> values) {
-        int len = (int) length();
-        int row = len + 1;
-        block.reshape(columns.keys().size(), row);
+    public DataFrame appendRow(Object name, List<V> values) {
+        int row = 1;
+        int col = 0;
+        block.reshape(row, col);
         block.row(values);
-        rows.append(name, row);
+        rows.put(name, length());
         return this;
     }
 
 
     public DataFrame<V> addColumn(String column, List<V> values) {
         int len = this.columns.keys().size();
-        columns.append(column, len + 1);
+        columns.put(column, len);
         block.column(values);
         return this;
     }
@@ -85,13 +85,13 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public List<V> getColumn(String column) {
-        Integer index = (Integer) this.columns.get(column);
-        return this.block.column(index);
+        Integer index = (Integer) columns.get(column);
+        return block.column(this, index);
     }
 
     public List<V> getRow(Object row) {
-        Integer index = (Integer) this.rows.get(row);
-        return this.block.row(index);
+        Integer index = (Integer) rows.get(row);
+        return block.row(this, index);
     }
 
     public V get(int row, int col) {
@@ -104,13 +104,6 @@ public class DataFrame<V> implements Iterable<List<V>> {
 
     public int width() {
         return block.width();
-    }
-
-    @Override
-    public String toString() {
-        String cols = this.columns.toString();
-        String blocks = this.block.toString();
-        return new StringBuilder(cols).append("\n").append(blocks).toString();
     }
 
     @Override

@@ -9,21 +9,19 @@ public interface IBlockService<V> {
 
     void reshape(int cols, int rows);
 
-    boolean column(List<V> values);
+    void column(List<V> values);
 
-    List<V> column(int index);
+    List<V> column(DataFrame df, int index);
 
-    List<V> row(int index);
+    List<V> row(DataFrame df, int index);
 
-    boolean row(List<V> vales);
+    void row(List<V> vales);
 
-    boolean put(int row, int col, V value);
+    void put(int row, int col, V value);
 
     V get(int row, int col);
 
     int length();
-
-    int length(int index);
 
     int width();
 

@@ -2,9 +2,8 @@ package com.expr.journey;
 
 import java.util.*;
 
-public class Index<K> {
-    private Map<K, Integer> index;
-
+public class Index<K,V> {
+    private Map<K, V> index;
 
     public Index() {
         this(Collections.emptyList());
@@ -15,31 +14,19 @@ public class Index<K> {
     }
 
     private Index(Collection<? extends Object> names, int size) {
-        assert names.size() == size;
+
         this.index = new LinkedHashMap<>(size);
         final Iterator<? extends Object> iterator = names.iterator();
-        for (int i = 0; i < size; i++) {
+        for (Integer i = 0; i < size; i++) {
             K name = (K) iterator.next();
-            put(name, i);
+            put(name, (V)i);
         }
 
     }
 
-    public void append(K key, int size) {
-        put(key, size);
-    }
-
-    public void extend(int size) {
-        int currentSize = (int) size();
-        int extendedWith = size + currentSize;
-        for (Integer i = currentSize; i < extendedWith; i++) {
-            put((K) i, i);
-        }
-    }
-
-    public void put(K key, Integer value) {
+    public void put(K key, V value) {
         if (this.index.put(key, value) != null) {
-            throw new RuntimeException(String.format("There is duplicate enrty in the frame for key %s", key));
+            throw new RuntimeException(String.format("There is duplicate entry in the frame for key %s", key));
         }
     }
 
@@ -47,7 +34,7 @@ public class Index<K> {
         return index.containsKey(key);
     }
 
-    public Object get(Object key) {
+    public V get(K key) {
         Object value = this.index.get(key);
         if (value == null) {
             throw new RuntimeException(String.format("Cannot find value for key %s", key));
@@ -55,11 +42,11 @@ public class Index<K> {
         return this.index.get(key);
     }
 
-    public long size() {
+    public int size() {
         return this.index.size();
     }
 
-    public Collection<? extends K> names() {
+    public Collection<? extends K> keys() {
         return this.index.keySet();
     }
 

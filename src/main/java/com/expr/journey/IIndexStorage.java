@@ -5,18 +5,16 @@ import java.util.Collection;
 /**
  * Created by mihailkopchev on 8/10/18.
  */
-public interface IIndexStorage<K> {
+public interface IIndexStorage<K,V> {
 
-    void extend(int size);
+    V get(K key);
 
-    Object get(K key);
-
-    long size();
+    int size();
 
     Collection<K> keys();
 
     boolean contains(K key);
 
-    void append(K key, int size);
+    void put(K key, V size);
 
 }

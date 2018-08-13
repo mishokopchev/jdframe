@@ -7,8 +7,8 @@ import java.util.Set;
 /**
  * Created by mihailkopchev on 8/10/18.
  */
-public class Row extends IndexStorage<Object> {
-    private static Integer id = 0;
+public class Row extends IndexStorage<Object, Object> {
+    private static Integer id = -1;
 
     public Row() {
         super();
@@ -18,28 +18,19 @@ public class Row extends IndexStorage<Object> {
         super(collection);
     }
 
-    private Object next() {
-        return null;
-    }
 
     @Override
-    public void extend(int size) {
-        super.extend(size);
-    }
-
-    @Override
-    public void append(Object key, int size) {
+    public void put(Object key, Object size) {
         if (key == null) {
             key = defaultKey();
         }
-        super.append(key, size);
+        super.put(key, size);
     }
 
     @Override
     public Integer defaultKey() {
         id++;
-        Set<Integer> keys = new HashSet(this.keys());
-        while (keys.contains(id)) {
+        while (contains(id)) {
             id++;
         }
         return id;
