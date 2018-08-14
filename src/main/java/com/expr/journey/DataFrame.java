@@ -1,13 +1,12 @@
 package com.expr.journey;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.*;
 
 public class DataFrame<V> implements Iterable<List<V>> {
     private IBlockService<V> block;
     private IIndexStorage columns;
     private IIndexStorage rows;
+    private Grouping groups;
 
 
     public DataFrame(List<List<V>> data, Collection<Object> columns) {
@@ -17,13 +16,14 @@ public class DataFrame<V> implements Iterable<List<V>> {
         this.columns = new Column(columns);
         this.rows = new Row(indices);
 
+        this.groups = new Grouping();
     }
 
     public DataFrame(String... columns) {
         this(Arrays.asList((Object[]) columns));
     }
 
-    public DataFrame(List<Object> columns) {
+    public DataFrame(Collection<Object> columns) {
         this(new ArrayList(), columns);
     }
 
@@ -64,6 +64,8 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public DataFrame appendRow(Object name, List<V> values) {
+        // tyko gore doly stava todo nqma li po dobra implementaciq no ako sega
+        // smenq shte e baq catastrophic
         int row = 1;
         int col = 0;
         block.reshape(row, col);
@@ -108,7 +110,20 @@ public class DataFrame<V> implements Iterable<List<V>> {
 
     @Override
     public Iterator<List<V>> iterator() {
-        throw new NotImplementedException();
+        DataFrame df = this;
+        return null;
+    }
+
+    public DataFrame count(boolean skipNull) {
+        return groups.apply(this, new Aggregation.Count<>(skipNull));
+    }
+
+    public DataFrame count() {
+        return groups.apply(this, new Aggregation.Count<>());
+    }
+
+    public DataFrame min() {
+        return groups.apply(this, new Aggregation.Min());
     }
 
 

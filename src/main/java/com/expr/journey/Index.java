@@ -46,7 +46,7 @@ public class Index<K,V> {
         return this.index.size();
     }
 
-    public Collection<? extends K> keys() {
+    public Set<? extends K> keys() {
         return this.index.keySet();
     }
 

@@ -1,6 +1,6 @@
 package com.expr.journey;
 
-import java.util.Collection;
+import java.util.Set;
 
 /**
  * Created by mihailkopchev on 8/10/18.
@@ -11,7 +11,7 @@ public interface IIndexStorage<K,V> {
 
     int size();
 
-    Collection<K> keys();
+    Set<K> keys();
 
     boolean contains(K key);
 

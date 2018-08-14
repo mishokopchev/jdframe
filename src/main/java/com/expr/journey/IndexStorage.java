@@ -3,6 +3,7 @@ package com.expr.journey;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by mihailkopchev on 8/10/18.
@@ -43,8 +44,8 @@ public abstract class IndexStorage<K, V> implements IIndexStorage<K, V> {
     }
 
     @Override
-    public Collection<K> keys() {
-        return (Collection<K>) storage.keys();
+    public Set<K> keys() {
+        return (Set<K>) storage.keys();
     }
 
     private void requireNonNullOrThrowException(Object obj) {
