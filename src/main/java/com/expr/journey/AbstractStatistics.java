@@ -43,4 +43,20 @@ public class AbstractStatistics {
             return result;
         }
     }
+
+    public static class Sum implements Statistic {
+        private Double result = 0.0;
+
+        @Override
+        public void increment(Number value) {
+            if (value != null) {
+                result += (Double) value;
+            }
+        }
+
+        @Override
+        public Number getValue() {
+            return result;
+        }
+    }
 }

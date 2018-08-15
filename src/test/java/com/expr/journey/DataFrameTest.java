@@ -4,8 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class DataFrameTest {
 
@@ -84,5 +83,53 @@ public class DataFrameTest {
 
     }
 
+    @Test
+    public void countAggregateTest() {
+        List<String> names = Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4", "Value 5");
+        DataFrame<?> df = util.withCols(names).withDefaultData().build();
+        DataFrame dataFrame = df.count();
+        System.out.println(dataFrame);
+        List row = dataFrame.getRow(0);
+        Assert.assertEquals(row, Arrays.asList(5, 5, 5, 5, 5));
+    }
+
+    @Test
+    public void countAggregateWithSkipNotAvailableTest() {
+        List<String> names = Arrays.asList("Value 1", "Value 2");
+        List firstColumn = Arrays.asList(null, "Petko");
+        List secondColumn = Arrays.asList(1, 2);
+
+        List<List> data = new ArrayList<>();
+        data.add(firstColumn);
+        data.add(secondColumn);
+
+        DataFrame df = util.withData(data).withCols(names).build();
+        df = df.count(true);
+        List row = df.getRow(0);
+
+        assertEqualsCollection(row, Arrays.asList(1, 2));
+
+    }
+
+    @Test
+    public void sumAggregateWithSkipNotAvailableTest() {
+        List<String> names = Arrays.asList("Value 1", "Value 2", "Value 3", "Value 4", "Value 5");
+        DataFrame<?> df = util.withCols(names).withDefaultData().build();
+
+        DataFrame dataFrame = df.sum();
+        System.out.println(dataFrame);
+        List row = dataFrame.getRow(0);
+        Assert.assertEquals(row, Arrays.asList(10.0, 10.0, 10.0, 10.0, 10.0));
+
+    }
+
+
+    private void assertEqualsCollection(Collection first, Collection second) {
+        Assert.assertEquals(first.size(), second.size());
+        Iterator firstIter = first.iterator();
+        Iterator secondIter = second.iterator();
+        Assert.assertEquals(firstIter.next(), secondIter.next());
+
+    }
 
 }

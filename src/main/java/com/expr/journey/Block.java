@@ -63,7 +63,7 @@ public class Block<V> {
         if (length() != 0) {
             StringBuilder builder = new StringBuilder("");
             for (int row = 0; row < length(); row++) {
-                for (int index = 0; index < blocks.size(); index++) {
+                for (int index = 0; index < width(); index++) {
                     builder.append(blocks.get(index).get(row));
                     builder.append("\t");
                 }

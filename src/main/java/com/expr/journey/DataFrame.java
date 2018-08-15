@@ -1,6 +1,7 @@
 package com.expr.journey;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class DataFrame<V> implements Iterable<List<V>> {
     private IBlockService<V> block;
@@ -25,6 +26,10 @@ public class DataFrame<V> implements Iterable<List<V>> {
 
     public DataFrame(Collection<Object> columns) {
         this(new ArrayList(), columns);
+    }
+
+    private DataFrame(IBlockService service, Collection columns) {
+
     }
 
     private Collection generateIndex(List<List<V>> data) {
@@ -64,8 +69,6 @@ public class DataFrame<V> implements Iterable<List<V>> {
     }
 
     public DataFrame appendRow(Object name, List<V> values) {
-        // tyko gore doly stava todo nqma li po dobra implementaciq no ako sega
-        // smenq shte e baq catastrophic
         int row = 1;
         int col = 0;
         block.reshape(row, col);
@@ -108,11 +111,19 @@ public class DataFrame<V> implements Iterable<List<V>> {
         return block.width();
     }
 
+    private ListIterator<List<V>> iterrows() {
+        return new Views.ListView(this, false).listIterator();
+    }
+
+    private ListIterator<List<V>> itercols() {
+        return new Views.ListView(this, false).listIterator();
+    }
+
     @Override
     public Iterator<List<V>> iterator() {
-        DataFrame df = this;
-        return null;
+        return itercols();
     }
+
 
     public DataFrame count(boolean skipNull) {
         return groups.apply(this, new Aggregation.Count<>(skipNull));
@@ -122,10 +133,53 @@ public class DataFrame<V> implements Iterable<List<V>> {
         return groups.apply(this, new Aggregation.Count<>());
     }
 
+    public DataFrame sum(){
+        return groups.apply(this,new Aggregation.Sum<>(new AbstractStatistics.Sum()));
+    }
+
     public DataFrame min() {
         return groups.apply(this, new Aggregation.Min());
     }
 
+    public DataFrame apply(Function function, Axis axis) {
+        // recome with the apply methods here
+        return null;
+    }
 
+    public DataFrame concat() {
+        return this;
+
+    }
+
+    public DataFrame merge() {
+        return this;
+    }
+
+    // the function to work
+    public enum Axis {
+        ROW, // rowsie0
+        COL // 1 col wise
+    }
+
+    public DataFrame shape() {
+        return null;
+    }
+
+    public List<V> dtypes() {
+        return null;
+    }
+
+    public boolean isEmpty() {
+        return this.length() == 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.columns);
+        builder.append("\n");
+        builder.append(this.block);
+        return builder.toString();
+    }
 }
 

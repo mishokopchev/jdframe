@@ -82,12 +82,12 @@ public class BlockService<V> implements IBlockService<V> {
 
     @Override
     public List<V> column(DataFrame df, int index) {
-        return new Views.SeriesBlockView(block, true, index);
+        return new Views.SeriesBlockView(block, false, index);
     }
 
     @Override
     public List<V> row(DataFrame df, int index) {
-        return new Views.SeriesBlockView<>(block, false, index);
+        return new Views.SeriesBlockView<>(block, true, index);
     }
 
     @Override
@@ -130,5 +130,10 @@ public class BlockService<V> implements IBlockService<V> {
                 struct.add(null);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.block.toString();
     }
 }

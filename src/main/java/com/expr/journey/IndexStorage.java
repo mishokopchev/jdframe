@@ -53,4 +53,8 @@ public abstract class IndexStorage<K, V> implements IIndexStorage<K, V> {
     }
 
 
+    @Override
+    public String toString() {
+        return this.storage.toString();
+    }
 }

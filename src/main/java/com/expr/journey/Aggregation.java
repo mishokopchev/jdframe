@@ -7,20 +7,21 @@ import java.util.List;
  */
 public class Aggregation {
 
-    public static class Count<V extends Number> implements Aggregate<V, Number> {
-        private boolean skipNullable;
+    public static class Count<V> implements Aggregate<V, Number> {
+        private boolean skipNa;
 
         public Count() {
             this(false);
         }
 
         public Count(boolean skippNullable) {
-            this.skipNullable = skippNullable;
+            this.skipNa = skippNullable;
         }
 
         public Number apply(List<V> vs) {
-            if (skipNullable) {
-                return vs.stream().filter(element -> element != null ? true : false).count();
+            if (skipNa) {
+                int count = (int) vs.stream().filter(element -> element != null ? true : false).count();
+                return count;
             } else {
                 return new Integer(vs.size());
             }
@@ -44,7 +45,11 @@ public class Aggregation {
         }
     }
 
-    public static class Sum<V extends Number> implements Aggregate<V, Number> {
+    public static class Sum<V extends Number> extends AbstractAggregation<V> {
+
+        public Sum(Statistic statistic) {
+            super(statistic);
+        }
 
         @Override
         public Number apply(List<V> vs) {

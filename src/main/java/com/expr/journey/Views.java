@@ -1,11 +1,33 @@
 package com.expr.journey;
 
 import java.util.AbstractList;
+import java.util.List;
 
 /**
  * Created by mihailkopchev on 8/13/18.
  */
 public class Views {
+
+    public static class ListView<V> extends AbstractList<List<V>> {
+        private DataFrame dataFrame;
+        private boolean transpose;
+
+        public ListView(DataFrame df, boolean transpose) {
+            this.dataFrame = df;
+            this.transpose = transpose;
+        }
+
+        @Override
+        public List<V> get(int index) {
+            return new SeriesListView<>(dataFrame, transpose, index);
+        }
+
+        @Override
+        public int size() {
+            return transpose ? dataFrame.length() : dataFrame.width();
+        }
+    }
+
     public static class SeriesListView<V> extends AbstractList<V> {
         private DataFrame<V> dataFrame;
         private boolean transpose;
@@ -19,12 +41,12 @@ public class Views {
 
         @Override
         public V get(int ind) {
-            return transpose ? dataFrame.get(ind, this.index) : dataFrame.get(this.index, ind);
+            return transpose ? dataFrame.get(this.index, ind) : dataFrame.get(ind, this.index);
         }
 
         @Override
         public int size() {
-            return transpose ? dataFrame.width() : dataFrame.length();
+            return transpose ? dataFrame.length() : dataFrame.width();
 
         }
     }
@@ -35,14 +57,14 @@ public class Views {
         private int index;
 
         public SeriesBlockView(Block<V> block, boolean transpose, int index) {
+            this.block = block;
             this.transpose = transpose;
             this.index = index;
-            this.block = block;
         }
 
         @Override
         public V get(int ind) {
-            return transpose ? block.get(ind,this.index) : block.get(this.index, ind);
+            return transpose ? block.get(this.index, ind) : block.get(ind, this.index);
         }
 
         @Override

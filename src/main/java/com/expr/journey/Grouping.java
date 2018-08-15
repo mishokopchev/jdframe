@@ -1,6 +1,7 @@
 package com.expr.journey;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -9,13 +10,37 @@ import java.util.function.Function;
  */
 public class Grouping<V> {
 
-    public DataFrame apply(DataFrame df, Function function) {
-        Iterator<List<V>> iterator = df.iterator();
-        DataFrame<Integer> dataFrame = new DataFrame(df.columns());
-        for (List<Integer> m : dataFrame) {
+    public <V> DataFrame<V> apply(DataFrame<V> df, Function<?, ?> function) {
+
+        if (df.isEmpty()) {
+            return df;
+        }
+
+        Collection columns = df.columns();
+        List<List<V>> grouped = setUp(columns.size());
+        List aggregated = new ArrayList<>();
+
+
+        for (List column : df) {
+            if (function instanceof Aggregate) {
+                Object result = Aggregate.class.cast(function).apply(column);
+                aggregated.add(result);
+            }
 
         }
-        return null;
+        for (int i = 0; i < aggregated.size(); i++) {
+            grouped.get(i).add((V) aggregated.get(i));
+        }
+
+        return new DataFrame<>(grouped, columns);
+    }
+
+    private <V> List setUp(int with) {
+        List<List<V>> main = new ArrayList<>();
+        for (int i = 0; i < with; ++i) {
+            main.add(new ArrayList());
+        }
+        return main;
     }
 
 }
